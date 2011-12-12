@@ -1,4 +1,4 @@
-'' usage: unconvert infile.html outfile.wakka
+'' usage: unconvert infile.html [outfile.wakka]
 '' (if outfile.wakka missing it outputs to screen)
 
 sub replace(byref s as string, byref oldtxt as const string, byref newtxt as const string = "")
@@ -17,7 +17,7 @@ sub tagreplace(byref s as string, byref oldtxt as const string, byref newtxt as 
 end sub
 
 function q(byref txt as const string) as string
-	'' Change instances of \' with \"
+	'' Replace instances of \' with \"
 	dim as string ret = txt
 	replace( ret, "'", """" )
 	return ret
@@ -125,6 +125,9 @@ sub unconvert(byref infile as const string, byref outfile as const string)
 
 		'' Escapes
 		replace s, "&nbsp;", " "
+		replace s, "&amp;", "&"
+		replace s, "&gt;", ">"
+		replace s, "&lt;", "<"
 
 
 		lines &= rtrim(s, any !"\t ")
@@ -144,5 +147,5 @@ sub unconvert(byref infile as const string, byref outfile as const string)
 
 end sub
 
-unconvert command(1), command(2)
-
+dim as string infile = command(1), outfile = command(2)
+unconvert( infile, outfile )
