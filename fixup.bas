@@ -1,4 +1,6 @@
-const NEWLINE = !"\r\n"
+'' usage: convertedfile [origfile] [outfile]
+'' origfile name generated from convertedfile name if missing
+'' writes to screen if outfile missing
 
 sub lineinput(byval fn as integer, byref s as string)
 
@@ -31,10 +33,16 @@ function fixup(byref convfile as const string, byref origfile as const string, b
 	#define STRIPINDENT(s) ltrim(s, any !"\t ")
 	#define ISBLANKLINE(s) (len(s) = 0 orelse len(STRIPINDENT(s)) = 0)
 	#define INDENT(s) left(s, len(s) - len(STRIPINDENT(s)) )
+	
+	#ifdef __FB_WIN32__
+	const NEWLINE = !"\r\n"
+	#else
+	const NEWLINE = !"\n"
+	#endif
 
 	dim as string lines = "", lines2
 	dim as string l1 = "", l2 = ""
-
+	
 	if open(origfile for input as #1) <> 0 then
 		return 1
 	end if
@@ -61,11 +69,11 @@ function fixup(byref convfile as const string, byref origfile as const string, b
 			lines &= l2
 			l2 = ""
 		end if
-
+		
 		lines &= NEWLINE
-
+		
 	loop
-
+	
 	close #1, #2
 
 	lines = rtrim(lines, any !" \t\r\n")
@@ -102,11 +110,10 @@ function main() as integer
 			origfile &= mid(convfile, ppath+1)
 		#endif
 	end if
-
-	'print "fixup " & convfile & " " & origfile
+	
+	'print "fixup " & convfile & " " & origfile & " " & outfile
 	return fixup(convfile, origfile, outfile)
-
+	
 end function
 
 end main()
-
